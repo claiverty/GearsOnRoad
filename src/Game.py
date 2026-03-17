@@ -1,7 +1,18 @@
 import sys
 import pygame
 
-from src.Const import WIDTH, HEIGHT, TITLE, FPS, WHITE, YELLOW, INITIAL_ENEMY_SPEED, LINE_SPEED
+from src.Const import (
+    WIDTH,
+    HEIGHT,
+    TITLE,
+    FPS,
+    WHITE,
+    YELLOW,
+    INITIAL_ENEMY_SPEED,
+    LINE_SPEED,
+    ROAD_X,
+    ROAD_WIDTH
+)
 from src.Player import Player
 from src.EnemyCar import EnemyCar
 from src.Background import Background
@@ -99,6 +110,12 @@ class Game:
 
     def update(self, dt):
         self.spawn_timer += dt
+        self.player.update()
+
+        player_hitbox = self.player.get_hitbox()
+
+        if player_hitbox.left <= ROAD_X or player_hitbox.right >= ROAD_X + ROAD_WIDTH:
+            self.running = False
 
         if self.spawn_timer >= self.spawn_interval:
             self.spawn_enemy()
@@ -121,9 +138,7 @@ class Game:
                     if self.spawn_interval > 350:
                         self.spawn_interval -= 40
 
-
             elif enemy.get_hitbox().colliderect(self.player.get_hitbox()):
-
                 self.running = False
 
     def draw_hud(self):
