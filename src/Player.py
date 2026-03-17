@@ -1,14 +1,38 @@
+import os
 import pygame
-from src.Const import LANES, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_Y, BLUE, BLACK
+from src.Const import (
+    LANES,
+    PLAYER_WIDTH,
+    PLAYER_HEIGHT,
+    PLAYER_Y,
+    IMAGES_DIR,
+    BLACK
+)
+
 
 class Player:
     def __init__(self):
         self.lane = 1
-        self.rect = pygame.Rect(
-            LANES[self.lane] - PLAYER_WIDTH // 2,
-            PLAYER_Y,
-            PLAYER_WIDTH,
-            PLAYER_HEIGHT
+        self.image = self.load_sprite("player_car.png", PLAYER_WIDTH, PLAYER_HEIGHT)
+        self.rect = self.image.get_rect(
+            center=(LANES[self.lane], PLAYER_Y + PLAYER_HEIGHT // 2)
+        )
+
+    def load_sprite(self, filename, width, height):
+        path = os.path.join(IMAGES_DIR, filename)
+        image = pygame.image.load(path).convert_alpha()
+        image = pygame.transform.smoothscale(image, (width, height))
+        return image
+
+    def get_hitbox(self):
+        hitbox_width = int(self.rect.width * 0.60)
+        hitbox_height = int(self.rect.height * 0.82)
+
+        return pygame.Rect(
+            self.rect.centerx - hitbox_width // 2,
+            self.rect.centery - hitbox_height // 2,
+            hitbox_width,
+            hitbox_height
         )
 
     def move_left(self):
@@ -22,10 +46,7 @@ class Player:
             self.update_position()
 
     def update_position(self):
-        self.rect.x = LANES[self.lane] - PLAYER_WIDTH // 2
+        self.rect.centerx = LANES[self.lane]
 
     def draw(self, screen):
-        pygame.draw.rect(screen, BLUE, self.rect, border_radius=8)
-        pygame.draw.rect(screen, BLACK, (self.rect.x + 8, self.rect.y + 10, 34, 20), border_radius=5)
-        pygame.draw.rect(screen, BLACK, (self.rect.x + 8, self.rect.y + 60, 12, 20), border_radius=4)
-        pygame.draw.rect(screen, BLACK, (self.rect.x + 30, self.rect.y + 60, 12, 20), border_radius=4)
+        screen.blit(self.image, self.rect)

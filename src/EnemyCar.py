@@ -1,25 +1,56 @@
-import pygame
+import os
 import random
-from src.Const import LANES, ENEMY_WIDTH, ENEMY_HEIGHT, RED, BLACK, HEIGHT
+import pygame
+from src.Const import (
+    LANES,
+    ENEMY_WIDTH,
+    ENEMY_HEIGHT,
+    HEIGHT,
+    IMAGES_DIR
+)
+
 
 class EnemyCar:
     def __init__(self):
-        lane = random.randint(0, 2)
-        self.rect = pygame.Rect(
-            LANES[lane] - ENEMY_WIDTH // 2,
-            -ENEMY_HEIGHT,
-            ENEMY_WIDTH,
-            ENEMY_HEIGHT
+        self.lane = random.randint(0, 2)
+
+        self.sprite_options = [
+            ("enemy_car.png", ENEMY_WIDTH, ENEMY_HEIGHT),
+            ("enemy_taxi.png", ENEMY_WIDTH, ENEMY_HEIGHT),
+            ("enemy_police.png", ENEMY_WIDTH, ENEMY_HEIGHT),
+            ("enemy_blackcar.png", ENEMY_WIDTH, ENEMY_HEIGHT),
+            ("enemy_pickup.png", ENEMY_WIDTH, ENEMY_HEIGHT + 8),
+        ]
+
+        filename, width, height = random.choice(self.sprite_options)
+        self.image = self.load_sprite(filename, width, height)
+
+        self.rect = self.image.get_rect(
+            center=(LANES[self.lane], -height // 2)
+        )
+
+    def load_sprite(self, filename, width, height):
+        path = os.path.join(IMAGES_DIR, filename)
+        image = pygame.image.load(path).convert_alpha()
+        image = pygame.transform.smoothscale(image, (width, height))
+        return image
+
+    def get_hitbox(self):
+        hitbox_width = int(self.rect.width * 0.60)
+        hitbox_height = int(self.rect.height * 0.82)
+
+        return pygame.Rect(
+            self.rect.centerx - hitbox_width // 2,
+            self.rect.centery - hitbox_height // 2,
+            hitbox_width,
+            hitbox_height
         )
 
     def update(self, speed):
         self.rect.y += speed
 
     def draw(self, screen):
-        pygame.draw.rect(screen, RED, self.rect, border_radius=8)
-        pygame.draw.rect(screen, BLACK, (self.rect.x + 8, self.rect.y + 10, 34, 20), border_radius=5)
-        pygame.draw.rect(screen, BLACK, (self.rect.x + 8, self.rect.y + 60, 12, 20), border_radius=4)
-        pygame.draw.rect(screen, BLACK, (self.rect.x + 30, self.rect.y + 60, 12, 20), border_radius=4)
+        screen.blit(self.image, self.rect)
 
     def off_screen(self):
-        return self.rect.y > HEIGHT
+        return self.rect.top > HEIGHT

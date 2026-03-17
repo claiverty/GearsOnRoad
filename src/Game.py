@@ -121,7 +121,9 @@ class Game:
                     if self.spawn_interval > 350:
                         self.spawn_interval -= 40
 
-            elif enemy.rect.colliderect(self.player.rect):
+
+            elif enemy.get_hitbox().colliderect(self.player.get_hitbox()):
+
                 self.running = False
 
     def draw_hud(self):

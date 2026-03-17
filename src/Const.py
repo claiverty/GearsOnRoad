@@ -1,3 +1,5 @@
+import os
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (70, 70, 70)
@@ -22,14 +24,18 @@ LANES = [
     ROAD_X + 2 * LANE_WIDTH + LANE_WIDTH // 2
 ]
 
-PLAYER_WIDTH = 50
-PLAYER_HEIGHT = 90
-PLAYER_Y = HEIGHT - 130
+PLAYER_WIDTH = 58
+PLAYER_HEIGHT = 110
+PLAYER_Y = HEIGHT - 150
 
-ENEMY_WIDTH = 50
-ENEMY_HEIGHT = 90
+ENEMY_WIDTH = 58
+ENEMY_HEIGHT = 110
 INITIAL_ENEMY_SPEED = 7
 
 LINE_HEIGHT = 40
 LINE_GAP = 40
 LINE_SPEED = 10
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ASSETS_DIR = os.path.join(BASE_DIR, "assets")
+IMAGES_DIR = os.path.join(ASSETS_DIR, "images")
